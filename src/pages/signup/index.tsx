@@ -1,45 +1,47 @@
+import { useState, FormEvent, useContext } from 'react';
 import Head from 'next/head';
-import logoImg from '../../public/logo.svg';
-import styles from '../styles/home.module.scss';
+import logoImg from '../../../public/logo.svg';
+import styles from '../../styles/home.module.scss';
 import Image from 'next/image';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import Link from 'next/link';
-import { FormEvent, useContext, useState } from 'react';
 import { AuthContext } from '@/context/AuthContext';
 import { toast } from 'react-toastify';
-import { GetServerSideProps } from 'next';
-import { canSSRGuest } from '@/utils/canSSRGuest';
 
-export default function Home() {
-  const { signIn } = useContext(AuthContext);
+export default function Signup() {
+  const { signUp } = useContext(AuthContext);
 
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
   const [loading, setLoading] = useState(false);
 
-  async function handleLogin(event: FormEvent) {
+  async function handleSignUp(event: FormEvent) {
     event.preventDefault();
 
-    if (email === '' || password === ``) {
-      toast.error(`Favor preencher os campos`);
+    if (name === '' || email === '' || password === '') {
+      toast.error('Preencha todos os campos');
       return;
     }
-    let data = {
-      email: email,
-      password: password,
-    };
-
     setLoading(true);
 
-    await signIn(data);
+    let data = {
+      name,
+      email,
+      password,
+    };
+
+    await signUp(data);
 
     setLoading(false);
   }
+
   return (
     <>
       <Head>
-        <title>SujeitoPizza - Faça seu login</title>
+        <title>Faça seu cadastro agora</title>
       </Head>
       <div className={styles.containerCenter}>
         <Image
@@ -47,15 +49,24 @@ export default function Home() {
           alt="logo"
         />
         <div className={styles.login}>
-          <form onSubmit={handleLogin}>
+          <h1>Criando sua conta</h1>
+          <form onSubmit={handleSignUp}>
             <Input
-              type="email"
+              placeholder="Digite seu nome"
+              type="text"
+              value={name}
+              onInput={(e) => setName(e.currentTarget.value)}
+            />
+            <Input
               placeholder="Digite seu email"
+              type="text"
+              value={email}
               onInput={(e) => setEmail(e.currentTarget.value)}
             />
             <Input
-              type="password"
               placeholder="Sua senha"
+              type="password"
+              value={password}
               onInput={(e) => setPassword(e.currentTarget.value)}
             />
             <Button
@@ -70,16 +81,10 @@ export default function Home() {
             href="/signup"
             className={styles.text}
           >
-            Não possui uma conta? Cadastre-se
+            Já possui uma conta? Faça login!
           </Link>
         </div>
       </div>
     </>
   );
 }
-
-export const getServerSideProps = canSSRGuest(async (ctx) => {
-  return {
-    props: {},
-  };
-});
