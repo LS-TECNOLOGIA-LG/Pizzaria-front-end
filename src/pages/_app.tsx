@@ -7,7 +7,7 @@ import { AuthProvider } from '@/context/AuthContext';
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <AuthProvider>
-      <Component {...pageProps} />;
+      <Component {...pageProps} />
       <ToastContainer autoClose={2500} />
     </AuthProvider>
   );
